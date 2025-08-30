@@ -43,6 +43,6 @@ public class UserController {
 
         // generate JWT if login is successful
         String token = jwtUtil.generateToken(request.getUsername());
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of("token", token, "userId", userService.getUser(request.getUsername())));
     }
 }

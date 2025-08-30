@@ -23,6 +23,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+    public Long getUser(String username) {
+        return userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElse(0L);
+    }
     // ✅ Login (match raw password with stored hashed password)
     public boolean login(String username, String password) {
         return userRepository.findByUsername(username)

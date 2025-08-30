@@ -1,4 +1,4 @@
-package com.notesapp.config;
+package com.notesapp.notesapp.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,11 +16,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -40,6 +44,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
+                .cors() // ✅ enable CORS
+                .and()
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
@@ -50,7 +56,21 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ Custom JWT filter
+    // ✅ Global CORS config
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // React frontend
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    // ✅ JWT Filter (unchanged)
     public static class JwtAuthFilter extends OncePerRequestFilter {
         private final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
@@ -58,33 +78,48 @@ public class SecurityConfig {
         protected void doFilterInternal(HttpServletRequest request,
                                         HttpServletResponse response,
                                         FilterChain filterChain) throws ServletException, IOException {
+            String requestPath = request.getRequestURI();
+
+            // ✅ Skip JWT for OPTIONS (preflight) and /auth/** endpoints
+            if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || requestPath.startsWith("/auth")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String authHeader = request.getHeader("Authorization");
-            System.out.println("Authorization header: " + authHeader);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
 
-                try {
-                    Claims claims = Jwts.parserBuilder()
-                            .setSigningKey(key)
-                            .build()
-                            .parseClaimsJws(token)
-                            .getBody();
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Authorization header missing or invalid\"}");
+                return;
+            }
 
-                    String username = claims.getSubject();
+            String token = authHeader.substring(7);
 
-                    if (username != null) {
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(
-                                        username,
-                                        null,
-                                        Collections.emptyList()
-                                );
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                } catch (Exception e) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
+            try {
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+                        .build()
+                        .parseClaimsJws(token)
+                        .getBody();
+
+                String username = claims.getSubject();
+
+                if (username != null) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    username,
+                                    null,
+                                    Collections.emptyList()
+                            );
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Invalid or expired token\"}");
+                return;
             }
 
             filterChain.doFilter(request, response);
