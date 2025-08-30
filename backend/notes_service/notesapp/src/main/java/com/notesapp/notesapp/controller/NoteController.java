@@ -17,21 +17,19 @@ public class NoteController{
     }
 
     // ✅ Get all notes
-    @GetMapping("/user/{userId}")
-    public List<Note> getNotes() {
+    @GetMapping
+    public List<Note> getAllNotes() {
         return noteService.getAllNotes();
+    }
+    @GetMapping("/user/{userId}")
+    public List<Note> getNotes(@PathVariable Long userId) {
+        return noteService.getAllNotesByUserId(userId);
     }
 
     // ✅ Create new note
     @PostMapping
     public Note createNote(@RequestBody Note note) {
-     //   return noteService.createNote(note);
-        Note n=new Note();
-        n.setTitle("hie");
-        n.setContent("hhehe");
-        long a=1;
-        n.setUserId(a);
-        return n;
+        return noteService.createNote(note);
     }
 
     // ✅ Update existing note

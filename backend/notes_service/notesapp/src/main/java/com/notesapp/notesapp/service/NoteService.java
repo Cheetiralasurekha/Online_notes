@@ -2,6 +2,9 @@ package com.notesapp.notesapp.service;
 import com.notesapp.notesapp.model.Note;
 import com.notesapp.notesapp.repository.NoteRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 @Service
 public class NoteService {
@@ -14,6 +17,9 @@ public class NoteService {
 
     public List<Note> getAllNotes() {
         return noteRepository.findAll();
+    }
+    public List<Note> getAllNotesByUserId(Long id) {
+        return noteRepository.findByUserId(id);
     }
     public Note createNote(Note note) {
         return noteRepository.save(note);
