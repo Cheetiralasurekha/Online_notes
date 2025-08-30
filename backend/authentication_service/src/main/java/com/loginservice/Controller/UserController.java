@@ -1,4 +1,4 @@
-package com.loginservice.controller;
+package com.loginservice.Controller;
 
 import com.loginservice.config.JwtUtil;
 import com.loginservice.model.User;
