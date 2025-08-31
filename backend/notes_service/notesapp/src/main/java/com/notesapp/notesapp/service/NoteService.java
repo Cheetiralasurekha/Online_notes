@@ -28,12 +28,12 @@ public class NoteService {
         return noteRepository.findByUserId(userId);
     }
     public Note updateNote(Long id, Note updatedNote) {
-        return noteRepository.findById(id).map(note -> {
-            note.setTitle(updatedNote.getTitle());
-            note.setContent(updatedNote.getContent());
-            note.setUserId(updatedNote.getUserId());
-            return noteRepository.save(note);
-        }).orElseThrow(() -> new RuntimeException("Note not found with id " + id));
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Note not found with id " + id));
+
+        note.setTitle(updatedNote.getTitle());
+        note.setContent(updatedNote.getContent());
+        return noteRepository.save(note);
     }
 
     public void deleteNote(Long id) {
