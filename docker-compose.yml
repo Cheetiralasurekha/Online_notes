@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: springuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: notesdb
+    ports: ["5432:5432"]
+
+  auth:
+    build: ./backend/authentication_service
+    environment:
+      PORT: 9091
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notesdb
+      SPRING_DATASOURCE_USERNAME: springuser
+      SPRING_DATASOURCE_PASSWORD: password
+      JWT_SECRET: dev-secret
+    depends_on: [postgres]
+    ports: ["9091:9091"]
+
+  notes:
+    build: ./backend/notes_service
+    environment:
+      PORT: 9090
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notesdb
+      SPRING_DATASOURCE_USERNAME: springuser
+      SPRING_DATASOURCE_PASSWORD: password
+      JWT_SECRET: dev-secret
+    depends_on: [postgres, auth]
+    ports: ["9090:9090"]
+
+  frontend:
+    build: ./frontend
+    depends_on: [auth, notes]
+    ports: ["3000:80"]

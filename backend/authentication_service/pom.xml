@@ -56,12 +56,12 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ✅ H2 (instead of MySQL) -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
 
         <!-- Lombok (optional but useful) -->
         <dependency>
