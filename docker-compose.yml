@@ -1,36 +1,54 @@
-version: "3.9"
 services:
   postgres:
     image: postgres:15
+    container_name: postgres_db
     environment:
       POSTGRES_USER: springuser
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: notesdb
-    ports: ["5432:5432"]
+      POSTGRES_PASSWORD: Renu@210603
+      POSTGRES_DB: authdb   # default DB created at startup
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d   # <-- creates notesdb too
 
   auth:
     build: ./backend/authentication_service
+    container_name: auth_service
     environment:
       PORT: 9091
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notesdb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/authdb
       SPRING_DATASOURCE_USERNAME: springuser
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_PASSWORD: Renu@210603
       JWT_SECRET: dev-secret
-    depends_on: [postgres]
-    ports: ["9091:9091"]
+    depends_on:
+      - postgres
+    ports:
+      - "9095:9091"
 
   notes:
-    build: ./backend/notes_service
+    build: ./backend/notes_service/notesapp
+    container_name: notes_service
     environment:
       PORT: 9090
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notesdb
       SPRING_DATASOURCE_USERNAME: springuser
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_PASSWORD: Renu@210603
       JWT_SECRET: dev-secret
-    depends_on: [postgres, auth]
-    ports: ["9090:9090"]
+    depends_on:
+      - postgres
+      - auth
+    ports:
+      - "9090:9090"
 
   frontend:
     build: ./frontend
-    depends_on: [auth, notes]
-    ports: ["3000:80"]
+    container_name: frontend_app
+    depends_on:
+      - auth
+      - notes
+    ports:
+      - "3001:80"
+
+volumes:
+  postgres-data:
