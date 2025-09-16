@@ -4,7 +4,7 @@ import Login from "./components/LoginFile";
 import Signup from "./components/SignupFile";
 import Notes from "./components/NotesListPage";
 import EditNote from "./components/EditNote";
-
+import AddNote from "./components/AddingFile"
 export default function App() {
    const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState("");
@@ -30,6 +30,7 @@ export default function App() {
           <>
             <Route path="/notes" element={<Notes token={token} />} />
             <Route path="/edit/:id" element={<EditNote token={token} />} />
+              <Route path="/add" element={<AddNote token={token} />} />
             <Route path="*" element={<Navigate to="/notes" replace />} />
           </>
         )}

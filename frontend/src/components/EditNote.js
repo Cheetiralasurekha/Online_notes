@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getNoteById, updateNote } from "../api";
+import "../styles/editNote.css";  // 👈 separate CSS
 
 export default function EditNote() {
   const { id } = useParams();
@@ -9,11 +10,10 @@ export default function EditNote() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Load this note
   useEffect(() => {
     setLoading(true);
-    getNoteById(id,localStorage.getItem("token"))
-      .then(res => setForm({ title: res.data.title, content: res.data.content }))
+    getNoteById(id, localStorage.getItem("token"))
+      .then((res) => setForm({ title: res.data.title, content: res.data.content }))
       .catch(() => setError("Note not found"))
       .finally(() => setLoading(false));
   }, [id]);
@@ -23,33 +23,38 @@ export default function EditNote() {
     const content = form.content.trim();
     if (!title || !content) return;
 
-    updateNote(id, { title, content }, localStorage.getItem('token'))
+    updateNote(id, { title, content }, localStorage.getItem("token"))
       .then(() => navigate("/notes"))
       .catch(() => setError("Failed to update note"));
   };
 
-  if (loading) return <div style={{ padding: 20 }}>Loading...</div>;
-  if (error) return <div style={{ padding: 20, color: "red" }}>{error}</div>;
+  if (loading) return <div className="editnote-container">Loading...</div>;
+  if (error) return <div className="editnote-container" style={{ color: "red" }}>{error}</div>;
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Edit Note</h2>
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+    <div className="editnote-container">
+      <div className="editnote-card">
+        <h2>Edit Note</h2>
+
+        <label>Title</label>
         <input
-          placeholder="Title"
+          type="text"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
         />
-        <input
-          placeholder="Content"
+
+        <label>Content</label>
+        <textarea
+          rows="4"
           value={form.content}
           onChange={(e) => setForm({ ...form, content: e.target.value })}
         />
+
+        <div className="editnote-buttons">
+          <button className="save-btn" onClick={handleSave}>Save</button>
+          <button className="cancel-btn" onClick={() => navigate("/notes")}>Cancel</button>
+        </div>
       </div>
-      <button onClick={handleSave}>Save</button>
-      <button onClick={() => navigate("/notes")} style={{ marginLeft: 8 }}>
-        Cancel
-      </button>
     </div>
   );
 }

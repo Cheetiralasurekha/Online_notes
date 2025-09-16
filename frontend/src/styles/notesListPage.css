@@ -1,0 +1,160 @@
+/* Page background */
+.notes-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 255, 0.7));
+  overflow-y: auto; /* scrollable */
+}
+
+/* Title */
+.notes-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Notes grid */
+.notes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+/* Note card */
+.note-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ensures actions stick to bottom */
+  height: 200px; /* fixed height */
+  overflow: hidden;
+  word-wrap: break-word;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.note-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Note text */
+.note-text {
+  flex: 1;
+  margin-bottom: 12px;
+  overflow-y: auto;
+}
+
+.note-text b {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-text p {
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Actions at bottom */
+.note-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Buttons */
+.styled-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.styled-button.edit {
+  background: #e0f0ff;
+  color: #007bff;
+}
+
+.styled-button.delete {
+  background: #ffe0e0;
+  color: #ff3b3b;
+}
+
+.styled-button:hover {
+  transform: scale(1.05);
+}
+
+/* Floating Add (+) button */
+.add-btn-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #007bff;
+  color: white;
+  font-size: 28px;
+  border: none;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.add-btn-float:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+}
+.notes-header {
+  display: flex;
+  justify-content: space-between; /* pushes Notes to left, Logout to right */
+  align-items: center;
+  width: 90%; /* make header as wide as notes container */
+  margin: 0 auto 20px auto; /* center it horizontally with spacing */
+}
+
+.notes-title {
+  margin: 0 auto; /* keeps "Notes" centered */
+  flex: 1;
+  text-align: center;
+}
+
+.logout-btn {
+  background-color: #4d65ff;
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: auto; /* push it to the far right */
+}
+
+.logout-btn:hover {
+  background-color: #0073e6;
+}
+@media (max-width: 600px) {
+  .notes-page {
+    padding: 15px;
+  }
+}
+
+

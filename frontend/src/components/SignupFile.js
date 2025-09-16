@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
+import "../styles/signUpFile.css"
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -19,22 +20,36 @@ export default function Signup() {
       })
       .catch(() => alert("Failed to register. Try another username."));
   };
+    return (
+   <div className="register-container">
+      <div className="register-card">
+        <h2>Register</h2>
 
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Register</h2>
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      /><br/>
-      <input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      /><br/>
-      <button onClick={handleSignup}>Sign Up</button>
+        <div className="form-group">
+          <input
+            type="text"
+            value={username}
+            placeholder="Enter Username"
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            value={password}
+            placeholder="Enter Password"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button className="register-btn" onClick={handleSignup}>
+          Sign Up
+        </button>
+      </div>
     </div>
+
   );
+
 }

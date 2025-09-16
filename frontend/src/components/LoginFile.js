@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
+import "../styles/loginFile.css";
 
 export function Login({ setIsLoggedIn, setToken }) {
   const [username, setUsername] = useState("");
@@ -20,23 +21,37 @@ export function Login({ setIsLoggedIn, setToken }) {
       })
       .catch(() => alert("Invalid username or password"));
   };
+   return (
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Login</h2>
 
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Login Page</h2>
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      /><br/>
-      <input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      /><br/>
-      <button onClick={handleLogin}>Login</button>
-      <p>Don't have an account? <a href="/register">Register here</a></p>
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Enter Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          
+        </div>
+
+        <div className="form-group">
+          <input
+            type="password"
+            value={password}
+            placeholder="Enter Password"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button className="login-btn" onClick={handleLogin}>Login</button>
+        <p className="login-footer">
+          Don’t have an account? <a href="/register">Register here</a>
+        </p>
+      </div>
     </div>
   );
 }
