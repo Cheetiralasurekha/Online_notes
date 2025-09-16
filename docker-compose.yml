@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres
     environment:
       POSTGRES_USER: springuser
       POSTGRES_PASSWORD: Renu@210603
@@ -39,7 +39,7 @@ services:
       - postgres
       - auth
     ports:
-      - "9090:9090"
+      - "9092:9090"
 
   frontend:
     build: ./frontend
